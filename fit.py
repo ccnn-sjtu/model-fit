@@ -32,6 +32,24 @@ def fit_hier(pool, data, model, fname, n_fits=20,
     Based on: https://github.com/sjgershm/mfit
 
     @ ZF
+
+    Parameters:
+        pool:
+        data:
+        model:
+        fname:
+        n_fits: int (optional). number of fits
+        seed: random seed for np.random.seed() function
+        tol:
+        max_iter: int,
+        init: 
+        verbose: bool, optional. whether verbose process
+
+
+
+    Return:
+
+
     '''
 
      # number of parameter, and possible bound
@@ -129,29 +147,29 @@ def fit_hier(pool, data, model, fname, n_fits=20,
 def fit(loss_fn, data, bnds, pbnds, p_name, p_priors,
         method='mle', alg='Nelder-Mead', init=False, seed=2021, 
         verbose=False):
-    '''Fit the parameter using optimization 
+    '''Fit the parameter using mle, map or hierchical fitting
 
-    Args: 
-
+    Parameters: 
         loss_fn: a function; log likelihood function
-        data:  a dictionary, each key map a dataframe
-        bnds: parameter bound
-        pbnds: possible bound, used to initialize parameter
-        priors: a list of scipy random variable, used to
+        data:  a dict, each key map a dataframe
+        bnds: tuple or list, parameter bound
+        pbnds: tuple or list possible bound, used to initialize parameter
+        priors: list, a list of scipy random variable, used to
                 calculate log prior
-        p_name: the names of parameters
-        method: decide if we use the prior -'mle', -'map', -'hier'
-        alg: the fiting algorithm, currently we can use 
+        p_name: str, the names of parameters
+        method: str {'mle', 'map', 'hier'} 
+            decide if we use the prior -'mle', -'map', -'hier'
+        alg:str, the fiting algorithm, currently we can use 
             - 'Nelder-Mead': a simplex algorithm,
             - 'BFGS': a quasi-Newton algorithm, return hessian,
                         but only works on unconstraint problem
             - 'bads': bayesian optimization problem
-        init:  input the init parameter if needed 
+        init: tuple, input the init parameter if needed 
         seed:  random seed; used when doing parallel computing
-        verbose: show the optimization details or not. 
+        verbose: bool, show the optimization details or not. 
     
     Return:
-        result: optimization results
+        result: dict, optimization results
 
     @ZF
     '''
@@ -214,16 +232,15 @@ def fit(loss_fn, data, bnds, pbnds, p_name, p_priors,
 # ------------------------------------------------------#
 #         Maximum likelihoood Estimation parallel       #
 # ------------------------------------------------------#
-
 def fit_parallel(pool, loss_fn, data, bnds, pbnds, p_name,              
                  p_priors, method='mle', alg='Nelder-Mead', 
                  init=False, seed=2021, verbose=False, n_fits=40):
     '''Fit the parameter using optimization, parallel 
 
     Args: 
-        pool:  computing pool; mp.pool
+        pool: mp.pool object; computing pool
         loss_fn: a function; log likelihood function
-        data:  a dictionary, each key map a dataframe
+        data:  a dict, each key map a dataframe
         bnds: parameter bound
         pbnds: possible bound, used to initialize parameter
         priors: a list of scipy random variable, used to
@@ -235,13 +252,13 @@ def fit_parallel(pool, loss_fn, data, bnds, pbnds, p_name,
             - 'BFGS': a quasi-Newton algorithm, return hessian,
                         but only works on unconstraint problem
             - 'bads': bayesian optimization problem
-        init:  input the init parameter if needed 
+        init: tuple; input the init parameter if needed 
         seed:  random seed; used when doing parallel computing
-        n_fits: number of fit 
-        verbose: show the optimization details or not. 
+        n_fits: int; number of fit 
+        verbose: bool; show the optimization details or not. 
     
     Return:
-        result: optimization results
+        result: dict; optimization results
 
     @ZF
     '''
@@ -271,18 +288,24 @@ def fit_parallel(pool, loss_fn, data, bnds, pbnds, p_name,
             
     return opt_res 
 
+
+
+
 # ------------------------------------------------------#
 #             Bayesian group level comparison           #
 # ------------------------------------------------------#
 
 def fit_bms(all_sub_info, use_bic=False, tol=1e-4):
     '''Fit group-level Bayesian model seletion
+    
     Nm is the number of model
-    Args: 
+    
+    Parameters: 
         all_sub_info: [Nm, list] a list of model fitting results
         use_bic: use bic to approximate lme
         tol: 
-    Outputs:
+    
+    Return:
         BMS result: a dict including 
             -alpha: [1, Nm] posterior of the model probability
             -p_m1D: [nSub, Nm] posterior of the model 
